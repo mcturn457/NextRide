@@ -1,0 +1,1 @@
+web: gunicorn 'scooter_verwaltung.wsgi'

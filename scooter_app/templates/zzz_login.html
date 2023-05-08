@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;0,1000;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900;1,1000&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    
+
+    <div class="login">
+        <h1>NextRide</h1>
+        <h3>Email:</h3>
+        <input type="email" id="email">
+        <h3>Passwort:</h3>
+        <input type="password" id="pw">
+        <input type="submit" onclick="login()">
+        <br>
+        {% if pw_incorrect == True %} <p>Passwort ist falsch!</p> {% else %} {% endif %}
+        <br>
+        <a href="/registration/">Noch kein Account?</a>
+
+    </div>
+    
+
+    <script>
+        function login() {
+            var email = document.getElementById("email");
+            var pw = document.getElementById("pw");
+
+            let token = '{{ csrf_token }}';
+
+            let formData = new FormData();
+            formData.append('email', email.value);
+            formData.append('pw', pw.value);
+
+            formData.append('csrfmiddlewaretoken', token);
+            
+            fetch('/', {
+                method: 'POST',
+                body: formData
+            });
+
+            window.location.reload();
+        }
+    </script>
+
+</body>
+</html>

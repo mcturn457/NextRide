@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %} Einstellungen {% endblock %}
+
+
+{% block content %}
+
+<div class="settings">
+    <h1>Einstellungen</h1>
+
+    <form action="" method="post">
+      {% csrf_token %}
+      <details open>
+        <summary>
+            Zugangsdaten
+        </summary>
+
+        <label for="firstname">Vorname</label>
+        <input type="text" value="{{ request.user.first_name }}">
+
+        <label for="firstname">Nachname</label>
+        <input type="text" value="{{ request.user.last_name }}">
+
+        <label for="firstname">Email</label>
+        <input type="text" value="{{ request.user.email }}">
+
+        <label for="firstname">Passwort</label>
+        <input type="password" value="{{ request.user.password }}"><br>
+        <a href="/change-pw">Passwort ändern?</a>
+      </details>
+
+      <details open>
+        <summary>
+            Persönliche Daten
+        </summary>
+
+        <label for="firstname">Straße & Hausnummer</label>
+        <input type="text" value="{{ street }}">
+
+        <label for="firstname">Postleitzahl</label>
+        <input type="text" value="{{ postalcode }}">
+
+        <label for="firstname">Ort</label>
+        <input type="text" value="{{ city }}">
+
+      </details>
+
+      <details open>
+        <summary>
+            Firma
+        </summary>
+        <label for="firstname">Name</label>
+        <input type="text" value="{{ street }}">
+
+        <label for="firstname">Straße & Hausnummer</label>
+        <input type="text" value="{{ postalcode }}">
+
+        <label for="firstname">Postleitzahl</label>
+        <input type="text" value="{{ city }}">
+
+        <label for="firstname">Ort</label>
+        <input type="text" value="{{ city }}">
+
+        <label for="firstname">Telefon</label>
+        <input type="text" value="{{ city }}">
+
+      </details>
+
+      <details open>
+        <summary>
+            Einstellungen
+        </summary>
+        <label for="firstname">Einnahmen pro Kilometer</label>
+        <input type="text" value="{{ city }}">
+
+      </details>
+      <br>
+      <input type="submit" value="Speichern">
+    </form>
+
+
+    <label for="company-change">Firma wechseln</label>
+    <select id="company-change">
+      {% for row in company_items %}
+      <option value="{{ row.company_id }}">{{ row.name }}</option>
+      {% endfor %}
+    </select>
+    <button onclick="companyChange()">Speichern</button>
+    
+    <script>
+      function companyChange() {
+        var company = document.getElementById('company-change');
+        let token = '{{ csrf_token }}';
+
+        let formData = new FormData();
+        formData.append('action', "company-change");
+        formData.append('company', company.value);
+        formData.append('csrfmiddlewaretoken', token);
+        
+        fetch('/settings/', {
+            method: 'POST',
+            body: formData
+        });
+        window.location.reload();
+      }
+    </script>
+
+    <br>
+    <p>Standort nicht korrekt?</p>
+    <li><a onclick="correctLocation()">Standort nicht korrekt?</a></li>
+    <p>Alle Scooter löschen</p>
+    <p>Alle Ladestationen löschen</p>
+    <p>Abmelden</p>
+    <p>reset</p> <!-- Warnhinweis -->
+    <p>Kosten pro Kilometer (Stromverbrauch)</p>
+
+
+    <h3>Abmelden</h3>
+    <button><a href="/logout/">Abmelden</a></button>
+
+</div>
+
+{% endblock %}

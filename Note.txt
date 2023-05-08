@@ -1,0 +1,34 @@
+Befehle für Django (Terminal)
+
+Zum aktivieren der virtuellen Arbeitsumgebung:
+"./env/Scripts/activate"
+
+Zum starten des Webservers:
+python manage.py runserver 0.0.0.0:8000
+
+
+Zum Datenbank Modell erstellen wenn ein neues model erstellt wurde in der App:
+python manage.py makemigrations
+
+Zum erstellen des SQL Codes zum anlegen der Datenbank:
+python manage.py migrate
+
+
+
+
+TODO:
+Scooter rückgabe:
+-Kosten für fahrt zu Firma addieren (income)
+-base_menu entfernen und sidebar in jeweilige datei packen
+
+Rückgabe des Scooters nicht in Scooter popup sondern in extra leiste die angezeigt wird wenn ein scooter ausgeliehen ist
+
+
+ALLOWED_HOSTS = [
+    '192.168.2.108',
+    '172.20.10.10',
+    '127.0.0.1',
+    'localhost',
+    '10.157.137.121',
+    '10.157.137.112' 
+]

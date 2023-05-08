@@ -1,0 +1,217 @@
+{% extends 'base_menu.html' %}
+
+{% block content %}
+
+<div class="content">
+
+    <div id="map"></div>
+
+    {% load static %}
+    <script>
+
+        window.onload = getLocation();
+
+        function getLocation() {
+            
+            if (navigator.geolocation) {
+                var position = navigator.geolocation.getCurrentPosition(showPosition);
+                
+            } else {
+                window.alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        var map = new L.map('map', { zoomControl: false });
+        var darkLayer, lightLayer;
+        var rights = "";
+        var scooter, station;
+        var btnAddScooter = document.getElementById('btnAddScooter');
+        var btnAddStation = document.getElementById('btnAddStation');
+
+        function showPosition(position) {
+            // Breite der Karte festlegen
+
+            var myWidth = window.innerWidth * .75
+            var element = document.getElementById("map");
+            element.style.width = myWidth + "px";
+
+            window.onresize = function() {
+                var myWidth = window.innerWidth * .75
+                element.style.width = myWidth + "px";
+            };
+
+            var container = L.DomUtil.get('map');
+            if(container != null){
+                container._leaflet_id = null;
+            }
+
+            map.setView([position.coords.latitude, position.coords.longitude], 16);
+
+            var mode = document.getElementById('darkmode').textContent;
+
+            map.eachLayer(function (layer) {
+                map.removeLayer(layer);
+            });
+
+            if (mode === "Dark Mode") {
+                lightLayer = L.tileLayer('https://tile.jawg.io/jawg-light/{z}/{x}/{y}{r}.png?access-token=dzffigTwdQHUlNNFg0lfWIbJFJ5ohhOiViumMXwwZQNMgtUtyXiasK0bce9X8HsU', {}).addTo(map);
+            } else {
+                darkLayer = L.tileLayer('https://tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=dzffigTwdQHUlNNFg0lfWIbJFJ5ohhOiViumMXwwZQNMgtUtyXiasK0bce9X8HsU', {}).addTo(map);
+            }
+            map.attributionControl.addAttribution("<a href=\"https://www.jawg.io\" target=\"_blank\">&copy; Jawg</a> - <a href=\"https://www.openstreetmap.org\" target=\"_blank\">&copy; OpenStreetMap</a>&nbsp;")
+            
+            var marker = L.marker([position.coords.latitude, position.coords.longitude]).addTo(map);
+
+            var circle = L.circle([position.coords.latitude, position.coords.longitude], { color: 'blue', fillColor: 'blue', fillOpacity: 0.1, radius: 100 }).addTo(map);
+
+            var scootericon = L.icon({
+                iconUrl: "{% static 'scooter-farbe.png' %}",
+                iconSize:     [40, 40],
+                popupAnchor:  [-8, -20]
+            });
+
+            // Scooter laden
+
+            '{% for row in scooter_items %}'
+
+            scooter = L.marker(['{{ row.latitude }}', '{{ row.longitude }}'], {icon: scootericon}).addTo(map);
+            scooter.bindPopup("{{ row.name }} <br> Scooter-id: {{ row.scooter_id }} <br><br> Ladezustand: {{ row.state_of_charge }}%");
+            
+            '{% endfor %}'
+
+            //Ladepunkte laden
+
+            '{% for row in station_items %}'
+
+            station = L.circle(['{{ row.latitude }}', '{{ row.longitude }}'], {
+                color: 'green',
+                fillColor: 'green',
+                fillOpacity: 0.1,
+                radius: 50
+            }).addTo(map);
+            station.bindPopup("{{ row.name }} <br> Station-id: {{ row.station_id }}");
+            
+            '{% endfor %}'
+            
+
+            function onMapClick(e) {
+                if (rights === "scooter") {
+                    scooter = L.marker([e.latlng.lat, e.latlng.lng], {icon: scootericon, draggable:'true'}).addTo(map);
+
+                    scooter.bindPopup("<div class='popup'><button onclick='addScooter()'>speichern</button> <button onclick='deleteScooter()'>löschen</button></div>");
+                    scooter.openPopup();
+                    rights = "";
+                }
+                if (rights === "charging-station") {
+                    station = L.circle([e.latlng.lat, e.latlng.lng], {
+                        color: 'green',
+                        fillColor: 'green',
+                        fillOpacity: 0.1,
+                        radius: 50
+                    }).addTo(map);
+
+                    station.bindPopup("<div class='popup'><button onclick='addStation()'>speichern</button> <button onclick='deleteStation()'>löschen</button></div>");
+                    station.openPopup();
+                    rights = "";
+                }
+            }
+
+            map.on('click', onMapClick);
+        }
+
+        
+        function scooterRight() {
+            rights = "scooter";
+            btnAddScooter.style.backgroundColor = 'white';
+            btnAddScooter.style.color = 'black';
+        }
+
+        function chargingStationRight() {
+            rights = "charging-station";
+            btnAddStation.style.backgroundColor = 'white';
+            btnAddStation.style.color = 'black';
+        }
+
+
+        function addScooter() {
+            var latitude = scooter.getLatLng().lat;
+            var longitude = scooter.getLatLng().lng;
+            let token = '{{ csrf_token }}';
+
+            let formData = new FormData();
+            formData.append('itemName', "scooter");
+            formData.append('latitude', latitude);
+            formData.append('longitude', longitude);
+            formData.append('csrfmiddlewaretoken', token);
+            
+            fetch('/setup-mode/', {
+                method: 'POST',
+                body: formData
+            });
+            window.location.reload();
+        }
+
+        function addStation() {
+            var latitude = station.getLatLng().lat;
+            var longitude = station.getLatLng().lng;
+            let token = '{{ csrf_token }}';
+
+            let formData = new FormData();
+            formData.append('itemName', "station");
+            formData.append('latitude', latitude);
+            formData.append('longitude', longitude);
+            formData.append('csrfmiddlewaretoken', token);
+            
+            fetch('/setup-mode/', {
+                method: 'POST',
+                body: formData
+            });
+            
+            setTimeout(1000);
+
+            window.location.reload();
+        }
+
+
+        function deleteScooter() {
+            map.removeLayer(scooter);
+            window.location.reload();
+        }
+
+        function deleteStation() {
+            map.removeLayer(station);
+            window.location.reload();
+        }
+
+
+        function correctLocation() {
+
+            //TBD: fly to the given postalcode and set marker
+
+            map.flyTo([51.1405229, 7.2209524], 16, {
+                duration: 5
+            });
+        }
+
+        function darkMode() {
+            var mode = document.getElementById("darkmode");
+
+            if (mode.innerHTML == "Dark Mode") {
+                document.body.style.backgroundColor = "#343541";
+                document.body.style.color = "#ffffff";
+                document.getElementById('darkmode').innerHTML = "Light Mode";
+                getLocation();
+            } else {
+                document.body.style.backgroundColor = "#f2f2f2";
+                document.body.style.color = "#000000";
+                document.getElementById('darkmode').innerHTML = "Dark Mode";
+                getLocation();
+            }
+        }
+
+
+    </script>
+</div>
+
+
+{% endblock %}
