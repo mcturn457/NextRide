@@ -136,3 +136,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SESSION_COOKIE_SAMESITE = None
 
+CSRF_TRUSTED_ORIGINS = ['https://nextride.up.railway.app']
