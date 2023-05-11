@@ -56,4 +56,4 @@ class User(models.Model):
     city = models.CharField(max_length=200)
 
     def __str__(self):
-        return self.user
+        return self.user_id

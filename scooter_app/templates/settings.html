@@ -1,92 +1,235 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Einstellungen</title>
 
-{% block title %} Einstellungen {% endblock %}
+<style>
+ html, .root {
+  padding: 0;
+  margin: 0;
+  font-size: 18px;
+}
+
+body {
+  font: menu;
+  font-size: 1rem;
+  line-height: 1.4;
+  padding: 0;
+  margin: 0;
+}
+section {
+  padding-top: 4rem;
+  width: 50%;
+  margin: auto;
+}
+h1 {
+  font-size: 2rem;
+  font-weight: 500;
+}
+details[open] summary ~ * {
+  animation: open 0.3s ease-in-out;
+}
+
+@keyframes open {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+details summary::-webkit-details-marker {
+  display: none;
+}
+
+details summary {
+  width: 100%;
+  padding: 0.5rem 0;
+  border-top: 1px solid black;
+  position: relative;
+  cursor: pointer;
+  font-size: 1.25rem;
+  font-weight: 300;
+  list-style: none;
+}
+
+details summary:after {
+  content: "+";
+  color: black;
+  position: absolute;
+  font-size: 1.75rem;
+  line-height: 0;
+  margin-top: 0.75rem;
+  right: 0;
+  font-weight: 200;
+  transform-origin: center;
+  transition: 200ms linear;
+}
+details[open] summary:after {
+  transform: rotate(45deg);
+  font-size: 2rem;
+}
+details summary {
+  outline: 0;
+}
+details p {
+  font-size: 0.95rem;
+  margin: 0 0 1rem;
+  padding-top: 1rem;
+}
+details label, input {
+  font-size: 0.95rem;
+  margin: 0 0 1rem;
+}
+
+#btnSubmit {
+  background-color: black;
+  color: white;
+  width: 100%;
+  text-align: center;
+  transition: 0.5s;
+  padding: 1rem;
+}
+
+#btnSubmit:hover {
+  background-color: white;
+  color: black;
+  transition: 0.5s;
+}
 
 
-{% block content %}
+.navbar ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #202123;
+}
 
-<div class="settings">
-    <h1>Einstellungen</h1>
+.navbar li {
+  float: left;
+}
 
-    <form action="" method="post">
-      {% csrf_token %}
-      <details open>
-        <summary>
-            Zugangsdaten
-        </summary>
+.navbar li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
 
-        <label for="firstname">Vorname</label>
-        <input type="text" value="{{ request.user.first_name }}">
+.navbar a:hover {
+  background-color: black;
+}
 
-        <label for="firstname">Nachname</label>
-        <input type="text" value="{{ request.user.last_name }}">
-
-        <label for="firstname">Email</label>
-        <input type="text" value="{{ request.user.email }}">
-
-        <label for="firstname">Passwort</label>
-        <input type="password" value="{{ request.user.password }}"><br>
-        <a href="/change-pw">Passwort ändern?</a>
-      </details>
-
-      <details open>
-        <summary>
-            Persönliche Daten
-        </summary>
-
-        <label for="firstname">Straße & Hausnummer</label>
-        <input type="text" value="{{ street }}">
-
-        <label for="firstname">Postleitzahl</label>
-        <input type="text" value="{{ postalcode }}">
-
-        <label for="firstname">Ort</label>
-        <input type="text" value="{{ city }}">
-
-      </details>
-
-      <details open>
-        <summary>
-            Firma
-        </summary>
-        <label for="firstname">Name</label>
-        <input type="text" value="{{ street }}">
-
-        <label for="firstname">Straße & Hausnummer</label>
-        <input type="text" value="{{ postalcode }}">
-
-        <label for="firstname">Postleitzahl</label>
-        <input type="text" value="{{ city }}">
-
-        <label for="firstname">Ort</label>
-        <input type="text" value="{{ city }}">
-
-        <label for="firstname">Telefon</label>
-        <input type="text" value="{{ city }}">
-
-      </details>
-
-      <details open>
-        <summary>
-            Einstellungen
-        </summary>
-        <label for="firstname">Einnahmen pro Kilometer</label>
-        <input type="text" value="{{ city }}">
-
-      </details>
-      <br>
-      <input type="submit" value="Speichern">
-    </form>
+.active {
+  background-color: black;
+}
 
 
-    <label for="company-change">Firma wechseln</label>
-    <select id="company-change">
-      {% for row in company_items %}
-      <option value="{{ row.company_id }}">{{ row.name }}</option>
-      {% endfor %}
-    </select>
-    <button onclick="companyChange()">Speichern</button>
-    
+</style>
+
+</head>
+<body>
+  <div class="navbar">
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/setup-mode">Karte</a></li>
+      <li><a class="active" href="/settings">Einstellungen</a></li>
+    </ul>
+  </div>
+
+  <div class="settings">
+
+    <section>
+
+      <h1>Einstellungen</h1>
+
+      <form action="" method="post">
+        {% csrf_token %}
+        <details>
+          <summary>
+              Zugangsdaten
+          </summary>
+          
+          <label for="firstname">Vorname</label><br>
+          <input type="text" id="firstname" value="{{ request.user.first_name }}"><br>
+          <label for="lastname">Nachname</label><br>
+          <input type="text" id="lastname" value="{{ request.user.last_name }}"><br>
+          <label for="firstname">Email</label><br>
+          <input type="text" value="{{ request.user.email }}"><br>
+          <label for="firstname">Passwort</label><br>
+          <input type="password" value="{{ request.user.password }}">
+          <button><a href="/change-pw">Passwort ändern?</a></button><br>
+          <label>Abmelden</label><br>
+          <button><a href="/logout/">Abmelden</a></button>
+
+        </details>
+
+        <details>
+          <summary>
+              Persönliche Daten
+          </summary>
+
+          <label for="firstname">Straße & Hausnummer</label><br>
+          <input type="text" value="{{ street }}"><br>
+          <label for="firstname">Postleitzahl</label><br>
+          <input type="text" value="{{ postalcode }}"><br>
+          <label for="firstname">Ort</label><br>
+          <input type="text" value="{{ city }}"><br>
+
+        </details>
+
+        <details>
+          <summary>
+              Firma
+          </summary>
+
+          <label for="firstname">Name</label><br>
+          <input type="text" value="{{ street }}"><br>
+          <label for="firstname">Straße & Hausnummer</label><br>
+          <input type="text" value="{{ postalcode }}"><br>
+          <label for="firstname">Postleitzahl</label><br>
+          <input type="text" value="{{ city }}"><br>
+          <label for="firstname">Ort</label><br>
+          <input type="text" value="{{ city }}"><br>
+          <label for="firstname">Telefon</label><br>
+          <input type="text" value="{{ city }}"><br>
+
+        </details>
+
+        <details>
+          <summary>
+              Konfiguration
+          </summary>
+
+          <label for="firstname">Einnahmen pro Kilometer</label>
+          <input type="text" value="{{ city }}">
+          <p>Standort nicht korrekt?</p>
+          <button onclick="correctLocation()">Standort nicht korrekt?</button><br>
+          <p>Alle Scooter löschen</p>
+          <p>Alle Ladestationen löschen</p>
+          <p>reset</p> <!-- Warnhinweis -->
+          <p>Kosten pro Kilometer (Stromverbrauch)</p>
+          <label for="company-change">Firma wechseln</label>
+          <select id="company-change">
+            {% for row in company_items %}
+            <option value="{{ row.company_id }}">{{ row.name }}</option>
+            {% endfor %}
+          </select>
+          <button onclick="companyChange()">Speichern</button>
+
+        </details>
+
+        <br>
+        <input type="submit" value="Speichern" id="btnSubmit">
+      </form>
+
+    </section>
+
     <script>
       function companyChange() {
         var company = document.getElementById('company-change');
@@ -105,19 +248,6 @@
       }
     </script>
 
-    <br>
-    <p>Standort nicht korrekt?</p>
-    <li><a onclick="correctLocation()">Standort nicht korrekt?</a></li>
-    <p>Alle Scooter löschen</p>
-    <p>Alle Ladestationen löschen</p>
-    <p>Abmelden</p>
-    <p>reset</p> <!-- Warnhinweis -->
-    <p>Kosten pro Kilometer (Stromverbrauch)</p>
-
-
-    <h3>Abmelden</h3>
-    <button><a href="/logout/">Abmelden</a></button>
-
 </div>
-
-{% endblock %}
+</body>
+</html>

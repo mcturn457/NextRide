@@ -14,10 +14,12 @@
     <style>
 
         body {
-            font-family: 'Nunito', sans-serif;
-            background-color: #343541;
+            font: menu;
+            background-color: black;
             color: white;
-            margin: 0px;
+            margin: 0;
+            padding: 0;
+            font-size: 18px;
         }
 
         .head {
@@ -26,13 +28,14 @@
         }
 
         .content {
-            display: block;
+            display: flex;
             text-align: center;
+            justify-content: center;
+            
         }
 
         .content label {
             display: block;
-            
         }
 
         .content input {
@@ -44,13 +47,59 @@
             width: 180px;
         }
 
+        .navbar ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: white;
+            border-bottom: 2px solid white;
+        }
+
+        .navbar li {
+            float: left;
+        }
+
+        .navbar li a {
+            display: block;
+            color: black;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: black;
+            color: white;
+        }
+
+        .active {
+            background-color: white;
+        }
+
+        .navbar li:last-child {
+            float: right;
+        }
 
     </style>
 </head>
 <body>
     <div class="startpage">
+        <div class="navbar">
+            <ul>
+              <li><a class="active" href="/">Home</a></li>
+              <li><a href="/setup-mode">Karte</a></li>
+              <li><a href="/settings">Einstellungen</a></li>
+              {% if request.user.is_authenticated %} 
+              <li><a href="/logout">Logout</a></li>
+              {% else %}
+              <li><a href="/login">Login</a></li>
+              {% endif %}
+            </ul>
+        </div>
+
         <div class="head">
-            <a href="/"><img src="{% static 'logo-transparent.png' %}" alt="logo" height="250" width="250"></a>
+            <img src="{% static 'logo-transparent.png' %}" alt="logo" height="250" width="250">
         </div>
 
         <div class="content">

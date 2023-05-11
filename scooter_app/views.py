@@ -144,21 +144,33 @@ def mode_setup(request):
         return redirect('operative-mode')
 
     if request.method == 'POST':
-        # get user
-        user = User_data.objects.get(user__exact=request.user.id)
-        # get company
-        company = Company.objects.get(company_id__exact=user.company_id)
 
-        if request.POST['itemName'] == 'scooter':    
-            fct.create_scooter(name=company.name, company_id=company.company_id, latitude=request.POST['latitude'], longitude=request.POST['longitude'])
-        elif request.POST['itemName'] == 'station':
-            fct.create_chargingStation(name=company.name, company_id=company.company_id, latitude=request.POST['latitude'], longitude=request.POST['longitude'])
+        if request.POST['typ'] == 'add':
+
+            # get user
+            user = User_data.objects.get(user__exact=request.user.id)
+            # get company
+            company = Company.objects.get(company_id__exact=user.company_id)
+
+            if request.POST['itemName'] == 'scooter':    
+                fct.create_scooter(name=company.name, company_id=company.company_id, latitude=request.POST['latitude'], longitude=request.POST['longitude'])
+            elif request.POST['itemName'] == 'station':
+                fct.create_chargingStation(name=company.name, company_id=company.company_id, latitude=request.POST['latitude'], longitude=request.POST['longitude'])
+
+        elif request.POST['typ'] == 'delete':
             
+            if request.POST['itemName'] == 'scooter':
+                fct.delete_scooter(request.POST['id'])
+            elif request.POST['itemName'] == 'station':
+                fct.delete_chargingStation(request.POST['id'])
+
 
     scooter_items = Scooter.objects.all()
     station_items = Charging_station.objects.all()
 
-    return render(request, 'mode-setup.html', {'scooter_items': scooter_items, 'station_items': station_items, 'mode': 'setup'})
+    data = {'scooter_items': scooter_items, 'station_items': station_items}
+
+    return render(request, 'mode-setup.html', data)
 
 
 @login_required
@@ -195,12 +207,3 @@ def settings(request):
 def dashboard(request):
     
     return render(request, 'dashboard.html')
-
-
-@login_required
-def testmap(request):
-
-    scooter_items = Scooter.objects.all()
-    station_items = Charging_station.objects.all()
-    
-    return render(request, 'test_map.html', {'scooter_items': scooter_items, 'station_items': station_items})

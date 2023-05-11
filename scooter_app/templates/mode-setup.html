@@ -1,6 +1,20 @@
-{% extends 'base_menu.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
+
+<div class="menu">
+    {% load static %}
+    <div class="sidebarSetup">
+        <h4><a id="sidebar-title" href="/">Hallo {{ request.user.first_name }}</a></h4>
+        <ul>
+            <li><a href="/dashboard/">Dashboard</a></li>
+            <li><a id="btnAddScooter" onclick="scooterRight()">Scooter hinzufügen</a></li>
+            <li><a id="btnAddStation" onclick="chargingStationRight()">Ladepunkt hinzufügen</a></li>
+            <li><a onclick="darkMode()" id="darkmode">Light Mode</a></li>
+            <li><a href="/settings/">Einstellungen</a></li>
+        </ul>
+    </div>
+</div>
 
 <div class="content">
 
@@ -75,13 +89,14 @@
             '{% for row in scooter_items %}'
 
             scooter = L.marker(['{{ row.latitude }}', '{{ row.longitude }}'], {icon: scootericon}).addTo(map);
-            scooter.bindPopup("{{ row.name }} <br> Scooter-id: {{ row.scooter_id }} <br><br> Ladezustand: {{ row.state_of_charge }}%");
+            scooter.bindPopup("{{ row.name }} <br> Scooter-id: {{ row.scooter_id }} <br><br> Ladezustand: {{ row.state_of_charge }}% <br> <button onclick='deleteItemScooter({{ row.scooter_id }})'>Löschen</button>");
             
             '{% endfor %}'
 
-            //Ladepunkte laden
+            // Ladepunkte laden
 
             '{% for row in station_items %}'
+
 
             station = L.circle(['{{ row.latitude }}', '{{ row.longitude }}'], {
                 color: 'green',
@@ -89,7 +104,7 @@
                 fillOpacity: 0.1,
                 radius: 50
             }).addTo(map);
-            station.bindPopup("{{ row.name }} <br> Station-id: {{ row.station_id }}");
+            station.bindPopup("{{ row.name }} <br> Station-id: {{ row.station_id }} <br> <button onclick='deleteItemStation({{ row.station_id }})'>Löschen</button>");
             
             '{% endfor %}'
             
@@ -98,7 +113,7 @@
                 if (rights === "scooter") {
                     scooter = L.marker([e.latlng.lat, e.latlng.lng], {icon: scootericon, draggable:'true'}).addTo(map);
 
-                    scooter.bindPopup("<div class='popup'><button onclick='addScooter()'>speichern</button> <button onclick='deleteScooter()'>löschen</button></div>");
+                    scooter.bindPopup("<div class='popup'><button onclick='addScooter()'>Speichern</button> <button onclick='deleteScooter()'>Löschen</button></div>");
                     scooter.openPopup();
                     rights = "";
                 }
@@ -110,7 +125,7 @@
                         radius: 50
                     }).addTo(map);
 
-                    station.bindPopup("<div class='popup'><button onclick='addStation()'>speichern</button> <button onclick='deleteStation()'>löschen</button></div>");
+                    station.bindPopup("<div class='popup'><button onclick='addStation()'>Speichern</button> <button onclick='deleteStation()'>Löschen</button></div>");
                     station.openPopup();
                     rights = "";
                 }
@@ -139,6 +154,7 @@
             let token = '{{ csrf_token }}';
 
             let formData = new FormData();
+            formData.append('typ', "add");
             formData.append('itemName', "scooter");
             formData.append('latitude', latitude);
             formData.append('longitude', longitude);
@@ -157,6 +173,7 @@
             let token = '{{ csrf_token }}';
 
             let formData = new FormData();
+            formData.append('typ', "add");
             formData.append('itemName', "station");
             formData.append('latitude', latitude);
             formData.append('longitude', longitude);
@@ -166,8 +183,6 @@
                 method: 'POST',
                 body: formData
             });
-            
-            setTimeout(1000);
 
             window.location.reload();
         }
@@ -183,11 +198,49 @@
             window.location.reload();
         }
 
+        function deleteItemScooter(id) {
+
+            if (confirm("Möchten Sie diesen Scooter wirklich löschen?") == true) {
+                let token = '{{ csrf_token }}';
+                let formData = new FormData();
+
+                formData.append('typ', 'delete');
+                formData.append('itemName', 'scooter');
+                formData.append('id', id);
+                formData.append('csrfmiddlewaretoken', token);
+                
+                fetch('/setup-mode/', {
+                    method: 'POST',
+                    body: formData
+                });
+                window.location.reload();
+            }
+
+            
+        }
+
+        function deleteItemStation(id) {
+
+            if (confirm("Möchten Sie diesen Ladepunkt wirklich löschen?") == true) {
+                let token = '{{ csrf_token }}';
+                let formData = new FormData();
+
+                formData.append('typ', 'delete');
+                formData.append('itemName', 'station');
+                formData.append('id', id);
+                formData.append('csrfmiddlewaretoken', token);
+
+                fetch('/setup-mode/', {
+                    method: 'POST',
+                    body: formData
+                });
+                window.location.reload();
+            }
+
+        }
 
         function correctLocation() {
-
             //TBD: fly to the given postalcode and set marker
-
             map.flyTo([51.1405229, 7.2209524], 16, {
                 duration: 5
             });

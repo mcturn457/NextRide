@@ -59,15 +59,14 @@ def create_chargingStation(name, company_id, latitude, longitude):
                                     used_loading_places=0)
 
 
-
 def create_company():
     return
 
-def delete_scooter():
-    return
+def delete_scooter(id):
+    Scooter.objects.filter(scooter_id__exact=id).delete()
 
-def delete_chargingStation():
-    return
+def delete_chargingStation(id):
+    Charging_station.objects.filter(station_id__exact=id).delete()
 
 def delete_company():
     return

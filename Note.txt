@@ -32,3 +32,25 @@ ALLOWED_HOSTS = [
     '10.157.137.121',
     '10.157.137.112' 
 ]
+
+
+
+Suchalgorithmus für schnellsten Weg:
+
+
+
+Alle Ladepunkt Objekte auslesen
+
+route = 0
+
+Foreach Objekt
+Strecke = Leaflet Routingmachine(Standort Scooter zu Standort Ladepunkt(Objekt))
+
+if route = 0 or Strecke < route:
+
+route = Strecke
+coordinates = Objekt.coordinates
+
+Ende Foreach
+
+Setze Scooter auf coordinates
