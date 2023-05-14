@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon2.ico' %}">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-    <title>Test-map</title>
+    <title>Operative Mode</title>
 </head>
 <body>
     
@@ -40,13 +42,17 @@
             overflow: hidden;
         }
         #action-bar button {
-            font-size: 20px;
-            color: white;
-            font-family: 'Nunito', sans-serif;
+            height: 100%;
+            width: 100%;
+            font-size: 30px;
+            font-weight: bold;
+            color: black;
+            font: menu;
             padding: 20px;
         }
 
     </style>
+
     {% load static %}
     <script>
         var map = L.map('map', {zoomControl: false}).fitWorld();
@@ -59,19 +65,20 @@
         map.setView([51.1397, 7.21583], 15);
 
         let scootericon = L.icon({
-                iconUrl: "{% static 'scooter-farbe.png' %}",
-                iconSize:     [40, 40],
+                iconUrl: "{% static 'scooter-white.png' %}",
+                iconSize:     [50, 50],
                 popupAnchor:  [-8, -20]
             });
-        
+
 
         // Scooter und Ladestationen laden
         let scooter, station;
+        var scooters = {};
 
         '{% for row in scooter_items %}'
 
-        scooter = L.marker(['{{ row.latitude }}', '{{ row.longitude }}'], {icon: scootericon}).addTo(map);
-        scooter.bindPopup("{{ row.name }} <br> Scooter-id: {{ row.scooter_id }} <br><br> Ladezustand: {{ row.state_of_charge }}% <br><br> <button id='btnAusleihen' onclick='rentScooter({{ row.scooter_id }}, {{ row.latitude }}, {{ row.longitude }})'>Ausleihen</button>");
+        scooters['{{ row.scooter_id }}'] = L.marker(['{{ row.latitude }}', '{{ row.longitude }}'], {icon: scootericon}).addTo(map);
+        scooters['{{ row.scooter_id }}'].bindPopup("{{ row.name }} <br> Scooter-id: {{ row.scooter_id }} <br><br> Ladezustand: {{ row.state_of_charge }}% <br><br> <button id='btnAusleihen' onclick='rentScooter({{ row.scooter_id }}, {{ row.latitude }}, {{ row.longitude }}, {{ row.state_of_charge }}," + '"{{ row.name }}"' + ")'>Ausleihen</button> <br> <button onclick='closestStation({{ row.scooter_id }}, {{ row.latitude }}, {{ row.longitude }}, {{ row.state_of_charge }}," + '"{{ row.name }}"' + ")'>Laden</button>");
 
         '{% endfor %}'
 
@@ -87,22 +94,26 @@
 
         '{% endfor %}'
 
-        // Position anzeigen
+        
         let marker, circle, zoomed;
+        let ziel, rights, routing;
+        let lat, lng, scooter_id, lat_ziel, lng_ziel, akkustand, firmen_name, km;
 
+        // Position anzeigen
         navigator.geolocation.watchPosition(success, error);
 
         map.on('click', onMapClick);
 
-        let ziel, rights, routing;
 
         function onMapClick(pos) {
             if (rights === "ziel") {
                 rights = "";
-                //ziel = L.marker([pos.latlng.lat, pos.latlng.lng], {draggable:'true'}).addTo(map);
+                lat_ziel = pos.latlng.lat;
+                lng_ziel = pos.latlng.lng;
 
                 routing = L.Routing.control({
                     show: false,
+                    createMarker: function() { return null; },
                     waypoints: [
                         L.latLng(lat, lng),
                         L.latLng(pos.latlng.lat, pos.latlng.lng)
@@ -110,23 +121,30 @@
                 }).addTo(map);
 
                 routing.on('routesfound', function test(e){
-                    console.log(e);
-                    console.log(e.routes[0].summary.totalDistance, e.routes[0].summary.totalTime);
 
-                    var actionBar = document.getElementById('action-bar');
+                    //console.log(e.routes[0].summary.totalDistance + " m " + (e.routes[0].summary.totalTime / 60) + " s");
 
-                    actionBar.style.display = "block";
+                    reichweite = akkustand * 0.2;
+                    km = e.routes[0].summary.totalDistance / 1000;
 
-                    var myWidth = window.innerHeight * .85
-                    var element = document.getElementById("map");
-                    element.style.height = myWidth + "px";
+                    if (km > reichweite) {
+                        alert('Akkustand reicht nicht mehr für die Strecke');
+                        map.removeControl(routing);
+                    } else {
+                        akkustand = (reichweite - km) / 0.2
+                        var actionBar = document.getElementById('action-bar');
 
-                    window.onresize = function() {
+                        actionBar.style.display = "block";
+
                         var myWidth = window.innerHeight * .85
+                        var element = document.getElementById("map");
                         element.style.height = myWidth + "px";
-                    };
 
-                    //actionBar.innerHTML = e.routes[0].summary.totalDistance + " m " + (e.routes[0].summary.totalTime / 60) + " s";
+                        window.onresize = function() {
+                            var myWidth = window.innerHeight * .85
+                            element.style.height = myWidth + "px";
+                        };
+                    }
 
                 });
             }
@@ -149,12 +167,7 @@
             if (!zoomed) {
                 zoomed = map.fitBounds(circle.getBounds());
             }
-
-            // View anordnen
-            //map.setView([lat, lng]);
-
         }
-
 
         function error(err) {
             if (err.code === 1) {
@@ -164,18 +177,18 @@
             }
         }
 
-        let lat, lng;
 
-        function rentScooter(id, lat1, lng2) {
-            alert("Wählen Sie das Ziel durch tippen auf die Karte aus");
+        function rentScooter(id, lat1, lng2, akku, name) {
+            //alert("Wählen Sie das Ziel durch tippen auf die Karte aus");
             lat = lat1;
             lng = lng2;
+            scooter_id = id;
+            akkustand = akku;
+            firmen_name = name;
             rights = "ziel";
         }
 
         function returnScooter() {
-            //routing.spliceWaypoints(0, 2);
-            //ziel.remove();
 
             if (confirm("Möchten Sie diesen Scooter wirklich zurückgeben?") == true) {
                 map.removeControl(routing);
@@ -186,16 +199,108 @@
                 var myHeight = window.innerHeight * .85
                 var element = document.getElementById("map");
                 element.style.height = "100%";
+
+                // Scooter auf neue Koordinaten setzen
+
+                map.removeLayer(scooters[scooter_id]);
+                scooters[scooter_id] = L.marker([lat_ziel, lng_ziel], {icon: scootericon}).addTo(map);
+                scooters[scooter_id].bindPopup(firmen_name + "<br> Scooter-id: " + scooter_id + "<br><br> Ladezustand: " + akkustand.toFixed() + "% <br><br> <button id='btnAusleihen' onclick='rentScooter(" + scooter_id + "," + lat_ziel + "," + lng_ziel + "," + akkustand.toFixed() + "," + '"' + firmen_name + '"' + ")'>Ausleihen</button> <br> <button onclick='closestStation(" + lat_ziel + "," + lng_ziel + ")'>Laden</button>");
+
+
+                // Neue Daten in db ändern per POST request
+
+                let token = '{{ csrf_token }}';
+                let formData = new FormData();
+
+                formData.append('scooter_id', scooter_id);
+                formData.append('akku', akkustand.toFixed());
+                formData.append('km', km);
+                formData.append('lat', lat_ziel);
+                formData.append('lng', lng_ziel);
+                formData.append('csrfmiddlewaretoken', token);
+
+                fetch('/setup-mode/', {
+                    method: 'POST',
+                    body: formData
+                });
+
             }
             
         }
 
-        function closestStation(scooter) {
+        function closestStation(id, lat, lng, akku, name) {
 
-            
+            const requestObj = new XMLHttpRequest();
+            let data, coordinates, route, response, distance;
+            route = 0;
+            scooter_id = id;
+            akkustand = akku;
+            firmen_name = name;
+
+            requestObj.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    
+                    data = JSON.parse(this.responseText);
+
+                    for (let [key, value] of Object.entries(data)) {
+                        // Für jedes Objekt die Strecke ausrechnen
+
+                        var request = 'https://api.mapbox.com/directions/v5/mapbox/driving/' +
+                        lng + '%2C' + lat + '%3B' + value.fields.longitude + '%2C' + value.fields.latitude + 
+                        '?alternatives=false&geometries=geojson&language=en&overview=simplified&steps=true&access_token=pk.eyJ1IjoibWFjdHVybjQ1NyIsImEiOiJjbGhuZ2Y5d3kxbHl1M2NwMXJhemJ1NmhvIn0.qGFP7_CO5jFavWchMdjShg'
+
+                        var xhttp = new XMLHttpRequest();
+                        xhttp.onreadystatechange = function() {
+                            if (this.readyState == 4 && this.status == 200) {
+                                response = JSON.parse(this.responseText);
+                                distance = response.routes[0].distance / 1000;
+                            }
+                        };
+
+                        xhttp.open("GET", request, false);
+                        xhttp.send();
+
+                        if (route == 0 || route > distance) {
+                            route = distance;
+                            coordinates = [value.fields.latitude, value.fields.longitude]
+                        }
+                    }
+                    
+                    if (confirm('Der nächste Ladepunkt ist ' + route.toFixed(2) + 'km entfernt, möchten Sie den Scooter jetzt laden?') == true) {
+                        // Scooter auf Koordinaten setzen und Ladestand auf 100%
+                        km = 0;
+                        akkustand = 100;
+
+                        map.removeLayer(scooters[scooter_id]);
+                        scooters[scooter_id] = L.marker(coordinates, {icon: scootericon}).addTo(map);
+                        scooters[scooter_id].bindPopup(firmen_name + "<br> Scooter-id: " + scooter_id + "<br><br> Ladezustand: " + akkustand + "% <br><br> <button id='btnAusleihen' onclick='rentScooter(" + scooter_id + "," + lat_ziel + "," + lng_ziel + "," + akkustand + "," + '"' + firmen_name + '"' + ")'>Ausleihen</button> <br> <button onclick='closestStation(" + lat_ziel + "," + lng_ziel + ")'>Laden</button>");
+
+                        // Neue Daten in db ändern per POST request
+
+                        let token = '{{ csrf_token }}';
+                        let formData = new FormData();
+
+                        formData.append('scooter_id', scooter_id);
+                        formData.append('akku', akkustand.toFixed());
+                        formData.append('km', km);
+                        formData.append('lat', lat_ziel);
+                        formData.append('lng', lng_ziel);
+                        formData.append('csrfmiddlewaretoken', token);
+
+                        fetch('/setup-mode/', {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                    }
+                    
+                }
+            }
+                
+            requestObj.open('GET', '/get/');
+            requestObj.send();
 
         }
-
 
     </script>
 

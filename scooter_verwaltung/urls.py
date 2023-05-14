@@ -13,4 +13,5 @@ urlpatterns = [
     path('operative-mode/', views.mode_operative, name='operative-mode'),
     path('settings/', views.settings, name='settings'),
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('get/', views.get_request, name='get_request'),
 ]

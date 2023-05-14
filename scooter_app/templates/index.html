@@ -7,7 +7,7 @@
     <title>NextRide</title>
 
     {% load static %}
-    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon2.ico' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;0,1000;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900;1,1000&display=swap" rel="stylesheet">
@@ -21,12 +21,6 @@
             margin: 0;
             padding: 0;
             font-size: 18px;
-        }
-
-        .head {
-            display: flex;
-            justify-content: center;
-            background-color: black;
         }
 
         .content {
@@ -55,24 +49,6 @@
             background-color: white;
         }
 
-        .footer {
-            bottom: 0px;
-        }
-
-        .footer ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-        }
-
-        .footer li {
-            display: block;
-            padding: 50px 30px;
-        }
-
         .navbar ul {
             list-style-type: none;
             margin: 0;
@@ -80,12 +56,17 @@
             overflow: hidden;
             background-color: black;
             border-bottom: 2px solid white;
+            border: solid red 2px;
+            height: 74px;
             
         }
 
         .navbar li {
-            float: left;
+            display: table-cell;
             vertical-align: middle;
+            float: left;
+            border: solid blue 2px;
+            height: 100%;
         }
 
         .navbar li a {
@@ -94,7 +75,6 @@
             text-align: center;
             padding: 14px 16px;
             text-decoration: none;
-            
         }
 
         .navbar a:hover {
@@ -111,33 +91,41 @@
             float: right;
         }
 
+        .navbar li img {
+            padding: 12px;
+        }
+
     </style>
 </head>
 <body>
     <div class="navbar">
         <ul>
-            <li><img src="{% static 'logo-transparent.png' %}" alt="logo" height="100" width="100"></li>
+            <li><img src="{% static 'logo3.png' %}" alt="logo" height="50" width="50"></li>
             <li><a class="active" href="/">Home</a></li>
             <li><a href="/setup-mode">Karte</a></li>
             <li><a href="/settings">Einstellungen</a></li>
             {% if request.user.is_authenticated %} 
-            <li><a href="/logout">Logout</a></li>
+            <li><a href="/logout">Abmelden</a></li>
             {% else %}
-            <li><a href="/login">Login</a></li>
+            <li><a href="/login">Anmelden</a></li>
             {% endif %}
         </ul>
     </div>
 
-    <div class="head">
-        <img src="{% static 'logo-transparent.png' %}" alt="logo" height="100" width="100">
-    </div>
-
     <div class="content">
-        
+
+        <div class="headline">
+            <h1>NEXTRIDE</h1>
+        </div>
+        <br>
         <div class="text">
             <h3>Willkommen bei NextRide{% if request.user.is_authenticated %} {{ request.user.first_name }} {% endif %}, der besten Plattorm für schnellen E-Scooter verleih!</h3>
             <p>Wir bieten dir die Möglichkeit, unsere modernen E-Scooter für deine nächste Stadtrundfahrt zu mieten. <br>
                 Unsere Scooter sind umweltfreundlich, leicht zu fahren und bieten eine tolle Alternative zu Autos oder öffentlichen Verkehrsmitteln.</p>
+            
+            <p>Die Registrierung als Kunde oder als Firma ist ganz einfach und schnell erledigt. <br>
+                Klicken Sie einfach auf den entsprechenden Button oben rechts auf unserer Website und folgen Sie den Schritten. <br>
+                Wir freuen uns darauf, Sie bald als unseren Kunden begrüßen zu dürfen!</p>
         </div>
 
         <br>
@@ -152,18 +140,6 @@
         <a href="/register-c/">Registrieren</a>
         
 
-        <p>Haben Sie schon ein Account?</p>
-        <a href="/login/">Anmelden</a>
-        <br><br>
-
-    </div>
-    <div class="footer">
-        <ul>
-            <li>Impressium</li>
-            <li>AGB</li>
-            <li>Datenschutzerklärung</li>
-            <li>FAQ</li>
-        </ul>
     </div>
 </body>
 </html>

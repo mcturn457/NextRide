@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% block title %} Setup Mode {% endblock %}
+
 {% block content %}
 
 <div class="menu">
@@ -26,7 +28,6 @@
         window.onload = getLocation();
 
         function getLocation() {
-            
             if (navigator.geolocation) {
                 var position = navigator.geolocation.getCurrentPosition(showPosition);
                 
@@ -79,8 +80,8 @@
             var circle = L.circle([position.coords.latitude, position.coords.longitude], { color: 'blue', fillColor: 'blue', fillOpacity: 0.1, radius: 100 }).addTo(map);
 
             var scootericon = L.icon({
-                iconUrl: "{% static 'scooter-farbe.png' %}",
-                iconSize:     [40, 40],
+                iconUrl: "{% static 'scooter-white.png' %}",
+                iconSize:     [50, 50],
                 popupAnchor:  [-8, -20]
             });
 
@@ -230,7 +231,7 @@
                 formData.append('id', id);
                 formData.append('csrfmiddlewaretoken', token);
 
-                fetch('/setup-mode/', {
+                fetch('/operative-mode/', {
                     method: 'POST',
                     body: formData
                 });

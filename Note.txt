@@ -54,3 +54,17 @@ coordinates = Objekt.coordinates
 Ende Foreach
 
 Setze Scooter auf coordinates
+
+
+r = L.Routing.control({
+                        createMarker: function() { return null; },
+                        show: false,
+                        addWaypoints: false,
+                        draggableWaypoints: false,
+                        fitSelectedRoutes: false,
+                        waypoints: [
+                            L.latLng(lat, lng),
+                            L.latLng(coordinates)
+                        ]
+                    }).addTo(map);
+

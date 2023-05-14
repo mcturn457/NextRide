@@ -1,12 +1,12 @@
 import Functions as fct
-from .models import Scooter
 from .forms import LoginForm, RegisterFormCompany, RegisterFormUser
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core import serializers
 from scooter_app.models import User as User_data
-from scooter_app.models import Company, Charging_station
+from scooter_app.models import Company, Charging_station, Scooter
 
 
 def start(request):
@@ -127,7 +127,22 @@ def mode_operative(request):
     user_mode = fct.user_mode(request.user.id)
     if user_mode == 'setup':
         return redirect('setup-mode')
+    print('Test1')
+    # Daten ändern
+    if request.method == 'POST':
 
+        print('Test2')
+        # get scooter
+        scooter = Scooter.objects.get(scooter_id__exact=request.POST['scooter_id'])
+
+        scooter.latitude = request.POST['lat']
+        scooter.longitude = request.POST['lng']
+        scooter.state_of_charge = request.POST['akku']
+        scooter.driven_distance = scooter.driven_distance + request.POST['km']
+
+        scooter.save()
+
+        print(request.POST['akku'])
 
     scooter_items = Scooter.objects.all()
     station_items = Charging_station.objects.all()
@@ -158,7 +173,7 @@ def mode_setup(request):
                 fct.create_chargingStation(name=company.name, company_id=company.company_id, latitude=request.POST['latitude'], longitude=request.POST['longitude'])
 
         elif request.POST['typ'] == 'delete':
-            
+
             if request.POST['itemName'] == 'scooter':
                 fct.delete_scooter(request.POST['id'])
             elif request.POST['itemName'] == 'station':
@@ -207,3 +222,8 @@ def settings(request):
 def dashboard(request):
     
     return render(request, 'dashboard.html')
+
+
+def get_request(request):
+    data = serializers.serialize('json', Charging_station.objects.all())
+    return HttpResponse(data)
