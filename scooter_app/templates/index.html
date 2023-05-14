@@ -23,8 +23,15 @@
             font-size: 18px;
         }
 
+        .headline {
+            display: flex;
+            justify-content: center;
+            letter-spacing: 0.5em;
+            border-bottom: 2px solid black;
+        }
+
         .content {
-            display: block;
+            justify-content: center;
             text-align: center;
             background-color: white;
         }
@@ -54,26 +61,23 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: black;
-            border-bottom: 2px solid white;
-            border: solid red 2px;
+            background-color: #202123;
             height: 74px;
-            
         }
 
         .navbar li {
             display: table-cell;
             vertical-align: middle;
             float: left;
-            border: solid blue 2px;
             height: 100%;
         }
 
         .navbar li a {
-            display: flex;
+            height: 100%;
+            display: block;
             color: white;
-            text-align: center;
             padding: 14px 16px;
+            padding-top: 22px;
             text-decoration: none;
         }
 
@@ -117,27 +121,16 @@
         <div class="headline">
             <h1>NEXTRIDE</h1>
         </div>
-        <br>
+        <br><br><br><br><br><br>
         <div class="text">
             <h3>Willkommen bei NextRide{% if request.user.is_authenticated %} {{ request.user.first_name }} {% endif %}, der besten Plattorm für schnellen E-Scooter verleih!</h3>
             <p>Wir bieten dir die Möglichkeit, unsere modernen E-Scooter für deine nächste Stadtrundfahrt zu mieten. <br>
                 Unsere Scooter sind umweltfreundlich, leicht zu fahren und bieten eine tolle Alternative zu Autos oder öffentlichen Verkehrsmitteln.</p>
             
-            <p>Die Registrierung als Kunde oder als Firma ist ganz einfach und schnell erledigt. <br>
-                Klicken Sie einfach auf den entsprechenden Button oben rechts auf unserer Website und folgen Sie den Schritten. <br>
+            <p>Die Registrierung als <a href="/register-u/">Kunde</a> oder als <a href="/register-c/">Firma</a> ist ganz einfach und schnell erledigt. <br>
+                Klicken Sie einfach auf den entsprechenden Link oben und folgen Sie den Schritten.<br>
                 Wir freuen uns darauf, Sie bald als unseren Kunden begrüßen zu dürfen!</p>
         </div>
-
-        <br>
-
-        <p>Jetzt Registrieren</p>
-        
-        <p>Als Kunde:</p>
-        <a href="/register-u/">Registrieren</a>
-        
-
-        <p>Als Firma:</p>
-        <a href="/register-c/">Registrieren</a>
         
 
     </div>

@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Einstellungen</title>
 
+  {% load static %}
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon2.ico' %}">
+
 <style>
  html, .root {
   padding: 0;
@@ -107,26 +110,36 @@ details label, input {
   padding: 0;
   overflow: hidden;
   background-color: #202123;
+  height: 74px;
 }
 
 .navbar li {
+  display: table-cell;
+  vertical-align: middle;
   float: left;
+  height: 100%;
 }
 
 .navbar li a {
+  height: 100%;
   display: block;
   color: white;
-  text-align: center;
   padding: 14px 16px;
+  padding-top: 22px;
   text-decoration: none;
 }
 
 .navbar a:hover {
   background-color: black;
+  color: white;
 }
 
-.active {
-  background-color: black;
+.navbar li:last-child {
+  float: right;
+}
+
+.navbar li img {
+  padding: 12px;
 }
 
 
@@ -136,9 +149,15 @@ details label, input {
 <body>
   <div class="navbar">
     <ul>
-      <li><a href="/">Home</a></li>
-      <li><a href="/setup-mode">Karte</a></li>
-      <li><a class="active" href="/settings">Einstellungen</a></li>
+        <li><img src="{% static 'logo3.png' %}" alt="logo" height="50" width="50"></li>
+        <li><a class="active" href="/">Home</a></li>
+        <li><a href="/setup-mode">Karte</a></li>
+        <li><a href="/settings">Einstellungen</a></li>
+        {% if request.user.is_authenticated %} 
+        <li><a href="/logout">Abmelden</a></li>
+        {% else %}
+        <li><a href="/login">Anmelden</a></li>
+        {% endif %}
     </ul>
   </div>
 
