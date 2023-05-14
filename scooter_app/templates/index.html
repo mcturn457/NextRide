@@ -36,6 +36,10 @@
             background-color: white;
         }
 
+        .text p {
+            line-height: 2em;
+        } 
+
         .content a {
             transition: 0.2s;
             height: 50px;
@@ -86,11 +90,6 @@
             color: white;
         }
 
-        .active a {
-            background-color: white;
-            color: black;
-        }
-
         .navbar li:last-child {
             float: right;
         }
@@ -121,9 +120,9 @@
         <div class="headline">
             <h1>NEXTRIDE</h1>
         </div>
-        <br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br>
         <div class="text">
-            <h3>Willkommen bei NextRide{% if request.user.is_authenticated %} {{ request.user.first_name }} {% endif %}, der besten Plattorm für schnellen E-Scooter verleih!</h3>
+            <h3>Willkommen bei NextRide{% if request.user.is_authenticated %} {{ request.user.first_name }}{% endif %}, der besten Plattorm für schnellen E-Scooter Verleih!</h3>
             <p>Wir bieten dir die Möglichkeit, unsere modernen E-Scooter für deine nächste Stadtrundfahrt zu mieten. <br>
                 Unsere Scooter sind umweltfreundlich, leicht zu fahren und bieten eine tolle Alternative zu Autos oder öffentlichen Verkehrsmitteln.</p>
             

@@ -94,7 +94,7 @@ details label, input {
   width: 100%;
   text-align: center;
   transition: 0.5s;
-  padding: 1rem;
+  height: 100px;
 }
 
 #btnSubmit:hover {
@@ -142,6 +142,34 @@ details label, input {
   padding: 12px;
 }
 
+.settings a {
+  text-decoration: none;
+  color: white;
+}
+
+.settings input {
+  width: 200px;
+  height: 30px;
+  border-radius: 10px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.settings button {
+  transition: 0.5s;
+  width: 100%;
+  height: 35px;
+  border-radius: 10px;
+  background-color: black;
+  color: white;
+}
+
+.settings button:hover {
+  background-color: white;
+  color: black;
+  transition: 0.5s;
+}
+
 
 </style>
 
@@ -174,25 +202,26 @@ details label, input {
               Zugangsdaten
           </summary>
           
-          <label for="firstname">Vorname</label><br>
-          <input type="text" id="firstname" value="{{ request.user.first_name }}"><br>
-          <label for="lastname">Nachname</label><br>
-          <input type="text" id="lastname" value="{{ request.user.last_name }}"><br>
+          
           <label for="firstname">Email</label><br>
           <input type="text" value="{{ request.user.email }}"><br>
           <label for="firstname">Passwort</label><br>
           <input type="password" value="{{ request.user.password }}">
-          <button><a href="/change-pw">Passwort ändern?</a></button><br>
-          <label>Abmelden</label><br>
-          <button><a href="/logout/">Abmelden</a></button>
+          <button><a href="/change-pw">Passwort ändern?</a></button><br><br>
 
         </details>
+
+        {% if mode == 'operative' %}
 
         <details>
           <summary>
               Persönliche Daten
           </summary>
-
+          
+          <label for="firstname">Vorname</label><br>
+          <input type="text" id="firstname" value="{{ request.user.first_name }}"><br>
+          <label for="lastname">Nachname</label><br>
+          <input type="text" id="lastname" value="{{ request.user.last_name }}"><br>
           <label for="firstname">Straße & Hausnummer</label><br>
           <input type="text" value="{{ street }}"><br>
           <label for="firstname">Postleitzahl</label><br>
@@ -201,7 +230,8 @@ details label, input {
           <input type="text" value="{{ city }}"><br>
 
         </details>
-
+        {% endif %}
+        {% if mode == 'setup' %}
         <details>
           <summary>
               Firma
@@ -219,20 +249,22 @@ details label, input {
           <input type="text" value="{{ city }}"><br>
 
         </details>
-
+        
         <details>
           <summary>
               Konfiguration
           </summary>
 
-          <label for="firstname">Einnahmen pro Kilometer</label>
-          <input type="text" value="{{ city }}">
+          <label for="firstname">Einnahmen pro Kilometer</label><br>
+          <input type="text" value="">
           <p>Standort nicht korrekt?</p>
           <button onclick="correctLocation()">Standort nicht korrekt?</button><br>
           <p>Alle Scooter löschen</p>
+          <button onclick="">Löschen</button><br>
           <p>Alle Ladestationen löschen</p>
-          <p>reset</p> <!-- Warnhinweis -->
-          <p>Kosten pro Kilometer (Stromverbrauch)</p>
+          <button onclick="">Löschen</button><br>
+          <p>Kosten pro Kilometer (Stromverbrauch)</p><br>
+          <input type="text" value=""><br>
           <label for="company-change">Firma wechseln</label>
           <select id="company-change">
             {% for row in company_items %}
@@ -242,7 +274,7 @@ details label, input {
           <button onclick="companyChange()">Speichern</button>
 
         </details>
-
+        {% endif %}
         <br>
         <input type="submit" value="Speichern" id="btnSubmit">
       </form>

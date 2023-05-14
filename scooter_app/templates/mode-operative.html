@@ -13,21 +13,44 @@
     <title>Operative Mode</title>
 </head>
 <body>
+
+    <div class="navbar">
+        <ul>
+            <li><img src="{% static 'logo3.png' %}" alt="logo" height="50" width="50"></li>
+            <li><a class="active" href="/">Home</a></li>
+            <li><a href="/setup-mode">Karte</a></li>
+            <li><a href="/settings">Einstellungen</a></li>
+            {% if request.user.is_authenticated %} 
+            <li><a href="/logout">Abmelden</a></li>
+            {% else %}
+            <li><a href="/login">Anmelden</a></li>
+            {% endif %}
+        </ul>
+    </div>
     
     <div id="map"></div>
     <div id="action-bar">
-        <button id="btnreturn" onclick="returnScooter()">Zurückgeben</button>
+        <button id="btnreturn" onclick="returnScooter()">Bewegen</button>
     </div>
 
     <style>
         body {
             padding: 0;
             margin: 0;
+            font: menu;
+            font-size: 18px;
         }
-        html, body, #map {
+
+        html, body {
             height: 100%;
             width: 100vw;
         }
+
+        #map {
+            height: 92%;
+            width: 100vw;
+        }
+
         #action-bar {
             display: none;
             position: absolute;
@@ -41,6 +64,7 @@
             text-align: center;
             overflow: hidden;
         }
+
         #action-bar button {
             height: 100%;
             width: 100%;
@@ -49,6 +73,51 @@
             color: black;
             font: menu;
             padding: 20px;
+        }
+
+        .navbar ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #202123;
+            height: 74px;
+        }
+
+        .navbar li {
+            display: table-cell;
+            vertical-align: middle;
+            float: left;
+            height: 100%;
+        }
+
+        .navbar li a {
+            height: 100%;
+            display: block;
+            color: white;
+            padding: 14px 16px;
+            padding-top: 22px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: black;
+            color: white;
+        }
+
+        .navbar li:last-child {
+            float: right;
+        }
+
+        .navbar li img {
+            padding: 12px;
+        }
+
+        #map button {
+            width: 100px;
+            height: 40px;
+            background-color: #343541;
+            color: white;
         }
 
     </style>
@@ -78,7 +147,7 @@
         '{% for row in scooter_items %}'
 
         scooters['{{ row.scooter_id }}'] = L.marker(['{{ row.latitude }}', '{{ row.longitude }}'], {icon: scootericon}).addTo(map);
-        scooters['{{ row.scooter_id }}'].bindPopup("{{ row.name }} <br> Scooter-id: {{ row.scooter_id }} <br><br> Ladezustand: {{ row.state_of_charge }}% <br><br> <button id='btnAusleihen' onclick='rentScooter({{ row.scooter_id }}, {{ row.latitude }}, {{ row.longitude }}, {{ row.state_of_charge }}," + '"{{ row.name }}"' + ")'>Ausleihen</button> <br> <button onclick='closestStation({{ row.scooter_id }}, {{ row.latitude }}, {{ row.longitude }}, {{ row.state_of_charge }}," + '"{{ row.name }}"' + ")'>Laden</button>");
+        scooters['{{ row.scooter_id }}'].bindPopup("{{ row.name }} <br> Scooter-id: {{ row.scooter_id }} <br><br> Ladezustand: {{ row.state_of_charge }}% <br><br> <button id='btnAusleihen' onclick='rentScooter({{ row.scooter_id }}, {{ row.latitude }}, {{ row.longitude }}, {{ row.state_of_charge }}," + '"{{ row.name }}"' + ")'>Ausleihen</button>  <button onclick='closestStation({{ row.scooter_id }}, {{ row.latitude }}, {{ row.longitude }}, {{ row.state_of_charge }}," + '"{{ row.name }}"' + ")'>Laden</button>");
 
         '{% endfor %}'
 

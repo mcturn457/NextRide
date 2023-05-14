@@ -205,7 +205,10 @@ def settings(request):
     if user_mode == 'operative':
         user = User_data.objects.get(user__exact=request.user.id)
         adress = {'street': user.street, 'postalcode': user.postalcode, 'city': user.city}
+        mode = {'mode': 'operative'}
         data.update(adress)
+        data.update(mode)
+
         
     elif user_mode == 'setup':
         user = User_data.objects.get(user__exact=request.user.id)
@@ -213,7 +216,9 @@ def settings(request):
         if Company.objects.filter(company_id__exact=user.company_id).exists():
             company = Company.objects.get(company_id__exact=user.company_id)
             adress = {'street': company.street, 'postalcode': company.postalcode, 'city': company.city}
+            mode = {'mode': 'setup'}
             data.update(adress)
+            data.update(mode)
 
     return render(request, 'settings.html', data)
 
