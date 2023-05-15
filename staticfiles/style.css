@@ -3,6 +3,7 @@ body {
     background-color: #343541;
     color: white;
     margin: 0px;
+    font-size: 18px;
     
 }
 
@@ -160,3 +161,41 @@ body {
   color: white;
 }
 
+/* navbar */
+.navbar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #202123;
+    height: 74px;
+}
+
+.navbar li {
+    display: table-cell;
+    vertical-align: middle;
+    float: left;
+    height: 100%;
+}
+
+.navbar li a {
+    height: 100%;
+    display: block;
+    color: white;
+    padding: 14px 16px;
+    padding-top: 22px;
+    text-decoration: none;
+}
+
+.navbar a:hover {
+    background-color: black;
+    color: white;
+}
+
+.navbar li:last-child {
+    float: right;
+}
+
+.navbar li img {
+    padding: 12px;
+}

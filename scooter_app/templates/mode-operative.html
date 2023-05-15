@@ -288,7 +288,7 @@
 
                 map.removeLayer(scooters[scooter_id]);
                 scooters[scooter_id] = L.marker([lat_ziel, lng_ziel], {icon: scootericon}).addTo(map);
-                scooters[scooter_id].bindPopup(firmen_name + "<br> Scooter-id: " + scooter_id + "<br><br> Ladezustand: " + akkustand.toFixed() + "% <br><br> <button id='btnAusleihen' onclick='rentScooter(" + scooter_id + "," + lat_ziel + "," + lng_ziel + "," + akkustand.toFixed() + "," + '"' + firmen_name + '"' + ")'>Ausleihen</button> <br> <button onclick='closestStation(" + lat_ziel + "," + lng_ziel + ")'>Laden</button>");
+                scooters[scooter_id].bindPopup("<p>" + firmen_name + "</p> Scooter-id: " + scooter_id + "<br> Ladezustand: " + akkustand.toFixed() + "% <br><br> <button id='btnAusleihen' onclick='rentScooter(" + scooter_id + "," + lat_ziel + "," + lng_ziel + "," + akkustand.toFixed() + "," + '"' + firmen_name + '"' + ")'>Ausleihen</button> <button onclick='closestStation(" + lat_ziel + "," + lng_ziel + ")'>Laden</button>");
 
 
                 // Neue Daten in db ändern per POST request

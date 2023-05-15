@@ -4,9 +4,24 @@
 
 {% block content %}
 
+<div class="navbar">
+    <ul>
+        {% load static %}
+        <li><img src="{% static 'logo3.png' %}" alt="logo" height="50" width="50"></li>
+        <li><a class="active" href="/">Home</a></li>
+        <li><a href="/setup-mode">Karte</a></li>
+        <li><a href="/settings">Einstellungen</a></li>
+        {% if request.user.is_authenticated %} 
+        <li><a href="/logout">Abmelden</a></li>
+        {% else %}
+        <li><a href="/login">Anmelden</a></li>
+        {% endif %}
+    </ul>
+</div>
+
 <div class="menu">
     {% load static %}
-    <div class="sidebarSetup">
+    <div id="sidebarSetup" class="sidebarSetup">
         <h4><a id="sidebar-title" href="/">Hallo {{ request.user.first_name }}</a></h4>
         <ul>
             <li><a href="/dashboard/">Dashboard</a></li>
@@ -24,6 +39,18 @@
 
     {% load static %}
     <script>
+
+        var myHeight = window.innerHeight;
+        var element = document.getElementById("sidebarSetup");
+        element.style.height = (myHeight - 74) + "px";
+        var element1 = document.getElementById("map");
+        element1.style.height = (myHeight - 74) + "px";
+
+        window.onresize = function() {
+            var myHeight = window.innerHeight;
+            element.style.height = (myHeight - 74) + "px";
+            element1.style.height = (myHeight - 74) + "px";
+        };
 
         window.onload = getLocation();
 
