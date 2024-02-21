@@ -62,12 +62,6 @@ body {
     padding: 0;
 }
 
-.sidebarSetup li:nth-last-child(2) {
-    position: absolute;
-    bottom: 60px;
-    width: 100%;
-}
-
 .sidebarSetup li:last-child {
     position: absolute;
     bottom: 15px;

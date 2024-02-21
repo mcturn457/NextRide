@@ -68,3 +68,6 @@ r = L.Routing.control({
                         ]
                     }).addTo(map);
 
+
+
+AJAX IN PROJEKT EINBINDEN FÜR LIVE Daten
