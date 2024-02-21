@@ -13,26 +13,27 @@
 
         @media (prefers-color-scheme: light) {
             :root {
-            --text: #0f0f0f;
-            --background: #ffffff;
-            --primary: #aedae0;
-            --secondary: #f7d9bb;
-            --accent: #705757;
-            --navbar: #202123;
-        }
+                --text: #09091b;
+                --background: #f0f0fa;
+                --primary: #534fbf;
+                --secondary: #c89adb;
+                --accent: #c678ce;
+                --navbar: #202123;
+            }
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
-            --text: #ffffff;
-            /* --background: #0f0f0f; */
-            --background: #ffffff;
-            --primary: #1f4b51;
-            --secondary: #442608;
-            --accent: #a88f8f;
-            --navbar: #202123;
+                --text: #e4e4f6;
+                /* --background: #05050f; */
+                --background: #f0f0fa;
+                --primary: #4340b0;
+                --secondary: #532465;
+                --accent: #7e3187;
+                --navbar: #202123;
+            }
         }
-        }
+
 
         body {
             font: menu;
@@ -53,7 +54,14 @@
             border-bottom: 2px solid var(--navbar);
             box-sizing: border-box;
             height: 10%;
-            color: var(--navbar);
+        }
+
+        .headline h1 {
+            font-size: 3rem;
+            background: var(--primary);
+            background: linear-gradient(to right, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .content {
@@ -73,7 +81,7 @@
             padding: 0;
             overflow: hidden;
             background-color: var(--navbar);
-            height: 10vh;
+            /* height: 10vh; */
         }
 
         .navbar li {
@@ -92,9 +100,9 @@
             text-decoration: none;
         }
 
-        .navbar a:hover {
-            background-color: black;
-            color: white;
+        .navbar li a:hover {
+            /* background-color: var(--accent); */
+            color: var(--accent);
         }
 
         .navbar li:last-child {
@@ -128,7 +136,7 @@
                 flex-direction: column;
                 position: fixed;
                 width: 100%;
-                background-color: #202123;
+                background-color: var(--background);
                 padding: 0;
                 z-index: 999;
                 overflow: hidden;
@@ -172,6 +180,11 @@
             align-items: center;
         }
 
+        .link {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
         .grid-item:hover {
             transition: 0.4s;
             opacity: 0.9;
@@ -200,7 +213,7 @@
             <li><a class="active" href="/">Home</a></li>
             <li><a href="/setup-mode">Karte</a></li>
             <li><a href="/settings">Einstellungen</a></li>
-            <li class="navbar-burger"><a onclick="toggleMenu()">Test</a></li>
+            <li class="navbar-burger"><a onclick="toggleMenu()">Menü</a></li>
             {% if request.user.is_authenticated %} 
             <li><a href="/logout">Abmelden</a></li>
             {% else %}
@@ -250,7 +263,7 @@
                 <div class="grid-item">
                     <div>
                         <h3>Bereit für dein nächstes Abenteuer?</h3>
-                        <p>Sei dabei, entdecke neue Wege und werde Teil der NextRide-Community. Wir freuen uns darauf, dich als unseren nächsten <a href="/register-u/">Kunden</a> zu begrüßen!</p>
+                        <p>Sei dabei, entdecke neue Wege und werde Teil der NextRide-Community. Wir freuen uns darauf, dich als unseren nächsten <a class="link" href="/register-u/">Kunden</a> zu begrüßen!</p>
                     </div>
                 </div>
             </div>
